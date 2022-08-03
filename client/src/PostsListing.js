@@ -1,21 +1,24 @@
-import Post from "./Post";
-import {useState,useEffect} from "react";
-import axios from "axios";
+import Post from './Post';
+import { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { CommunityContext } from './CommunityContext';
 
 function PostsListing() {
-
-  const [comments,setComments] = useState([]);
-
+  const [comments, setComments] = useState([]);
+  const { community } = useContext(CommunityContext);
   useEffect(() => {
-    axios.get('http://localhost:4000/comments', {withCredentials:true})
-      .then(response => setComments(response.data));
-
-  }, []);
-
+    let url = '/comments';
+    if (community) {
+      url += `?community=${community}`;
+    }
+    axios
+      .get(url, { withCredentials: true })
+      .then((response) => setComments(response.data));
+  }, [community]);
 
   return (
     <div className="bg-reddit_dark">
-      {comments.map(comment => (
+      {comments.map((comment) => (
         <Post {...comment} isListing={true} />
       ))}
     </div>

@@ -1,35 +1,31 @@
-import {Route, Switch, useLocation} from "react-router-dom";
-import {useState, useEffect} from "react";
-import Board from "./Board";
-import CommentPage from "./CommentPage";
-import CommentModal from "./CommentModal";
-import SearchResultsPage from "./SearchResultsPage";
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import Board from './Board';
+import CommentPage from './CommentPage';
+import CommentModal from './CommentModal';
+import SearchResultsPage from './SearchResultsPage';
 
 function RoutingSwitch() {
+  const location = useLocation();
+  const [commentId, setCommentId] = useState(null);
 
-  const [postOpen, setPostOpen] = useState(false);
-  // const [commentId, setCommentId] = useState(null);
+  const history = useHistory();
 
-  let location = useLocation();
-  let commentId = null;
-
-  if (location.state && location.state.commentId) {
-    location.pathname = '/';
-    if (postOpen) {
-      commentId = location.state.commentId;
+  if (location?.state?.commentId) {
+    if (location?.state?.source) {
+      location.pathname = '/r/' + location.state.source;
     } else {
-      location.state.commentId = null;
+      location.pathname = '/';
     }
-
+    if (!commentId) {
+      setCommentId(location.state.commentId);
+    }
   }
 
-  useEffect(() => {
-    setPostOpen(true);
-  }, [commentId]);
-
-  useEffect(() => {
-    commentId = null;
-  }, [postOpen]);
+  function close() {
+    history.push({ pathname: location.pathname });
+    setCommentId(null);
+  }
 
   return (
     <div>
@@ -37,12 +33,14 @@ function RoutingSwitch() {
         <div>
           <CommentModal
             id={commentId}
-            open={postOpen}
-            onClickOut={() => setPostOpen(false)} />
+            open={!!commentId}
+            onClickOut={() => close()}
+          />
         </div>
       )}
       <Switch location={location}>
         <Route exact path="/" component={Board} />
+        <Route exact path="/r/:community" component={Board} />
         <Route exact path="/comments/:id" component={CommentPage} />
         <Route exact path="/search/:text" component={SearchResultsPage} />
       </Switch>

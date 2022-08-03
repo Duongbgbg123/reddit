@@ -1,14 +1,14 @@
-import Header from "./Header";
-import {BrowserRouter as Router, Redirect} from "react-router-dom";
-import RoutingSwitch from "./RoutingSwitch";
-import PostFormModal from "./PostFormModal";
-import AuthModal from "./AuthModal";
-import {useContext, useEffect} from "react";
-import RedirectContext from "./RedirectContext";
-
+import Header from './Header';
+import { BrowserRouter as Router, Redirect } from 'react-router-dom';
+import RoutingSwitch from './RoutingSwitch';
+import PostFormModal from './PostFormModal';
+import AuthModal from './AuthModal';
+import { useContext, useEffect } from 'react';
+import RedirectContext from './RedirectContext';
+import CommnityFormModal from './CommnityFormModal';
 
 function Routing() {
-  const {redirect,setRedirect} = useContext(RedirectContext);
+  const { redirect, setRedirect } = useContext(RedirectContext);
   useEffect(() => {
     if (redirect) {
       setRedirect(false);
@@ -16,14 +16,13 @@ function Routing() {
   }, [redirect]);
   return (
     <Router>
-      {redirect && (
-        <Redirect to={redirect} />
-      )}
+      {redirect && <Redirect to={redirect} />}
       {!redirect && (
         <>
           <Header />
           <RoutingSwitch />
           <PostFormModal />
+          <CommnityFormModal />
           <AuthModal />
         </>
       )}
